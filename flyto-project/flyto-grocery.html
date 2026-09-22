@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Grocery Stores in Los Angeles</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 60%; }
+#features {
+        width: 40%;
+        margin-left: 60%;
+        height: 100vh;
+        font-family: sans-serif;
+        overflow-y: scroll;
+        background-color: #fafafa;
+    }
+    section {
+        padding: 20px 40px;
+        line-height: 25px;
+        min-height: 30vh; /* vh viewport height*/
+        border-bottom: 1px solid #ddd;
+        opacity: 0.25;
+        font-size: 13px;
+    }
+    section.active {
+        opacity: 1;
+    }
+    section:last-child {
+        border-bottom: none;
+        margin-bottom: 200px;
+    }
+    #sources {
+        opacity: 1;
+    }
+    .store-marker {
+    background-color: #ffffff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #ff4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.store-marker:hover {
+    transform: scale(1.2);
+}
+
+.store-photo-container {
+    width: 100%;
+    margin: 12px 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: #222; /* Fallback dark background while loading */
+}
+
+.store-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+.photo-credit {
+    font-size: 11px;
+    color: black;         /* Soft gray color so it's readable but subtle */
+    background-color: #ffffff;
+    font-style: italic;
+    margin-top: 4px;        /* Pulls it up close to the bottom of the photo */
+    margin-bottom: 0;
+    text-align: right;      /* Aligns it neatly to the bottom right corner of the image */
+    padding-right: 4px;
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="features">
+    <section id="Introduction" class="active">
+        <h1>Luxury at the Cost of Living</h1>
+        <p>This interactive spatial narrative maps the economic landscape of Los Angeles County through the lens of food accessibility and distance. 
+            By tracking grocery store placement across vastly differing cities within Los Angeles and taking into account Area Median Income (AMI) the difference in food access between affluent neighborhoods and working class neighborhoods reinforces the stark regional wealth gap.</p>
+        <h3>Hover your mouse over the text section and scroll. As you scroll you will be taken to each grocery store location and follow a route as if you were driving to these places today! You can also
+            interact with the map to look at the surrounding areas and explore the city.
+        </h3>
+    </section>
+
+    <section id="store1">
+        <h3>1. Trader Joe's — Pasadena (San Gabriel Valley)</h3>
+        <p><strong>Median Household Income:</strong> $131,630 | <strong>AMI Tier:</strong> Above Moderate Income | <strong>Population:</strong> 138,699</p>
+        <p>Despite Pasadena’s massive generational affluence, historical redlining and freeway construction systematically isolated its Black and Latino populations into under-resourced pockets. 
+            This spatial segregation created a stark internal wealth divide where high-end commercial infrastructure directly contrasts with historically marginalized neighborhoods.</p>
+        <div class="store-photo-container">
+            <img src="photos/tjs.jpg" alt="Exterior storefront view of the original 1967 Trader Joe's location in Pasadena, featuring its classic red facade, vintage signage, and surrounding parking lot." class="store-photo">
+            <p class="photo-credit">Photo: Refinery29</p>
+        </div>
+        <p>Opened in Pasadena in 1967 as the original location, Trader Joe's uses direct-to-manufacturer private labeling to offer premium and organic goods at highly competitive, accessible prices. 
+            However, while its pricing structure is affordable, corporate site selection selectively targets high-income, gentrified zip codes, geographically insulating its stores from lower-income communities.</p>
+    </section>
+    
+    <section id="store2">
+        <h3>2. 99 Ranch Market — Monterey Park (San Gabriel Valley)</h3>
+        <p><strong>Median Household Income:</strong> $77,605 | <strong>AMI Tier:</strong> Low Income | <strong>Population:</strong> 61,096</p>
+        <p>In the late 20th century, affluent Asian immigrants chose to bypass traditional, low-income urban enclaves like Chinatown to establish the nation's Little Taipei refering to the thriving Taiwanese and Taiwanese American communities. 
+            This concentrated influx of immigrant middle-class capital created a unique localized economy that anchored wealth retention against broader systemic disparities.</p>
+        <div class="store-photo-container">
+            <img src="photos/99.jpg" alt="Street-level view of the 99 Ranch Market storefront in Monterey Park, showing the prominent red and greeen logo and customer walking near the entrance." class="store-photo">
+            <p class="photo-credit">Photo: Yelp</p>
+        </div>
+        <p> Originally named "99 Price Market," the number nine is considered lucky in Chinese culture and a homophone for longevity and "Ranch" was later added to the name to emphasize freshness. 
+            99 Ranch relies on direct overseas supply chains and specialized regional distribution to keep authentic Asian staples, specialty produce, and proteins highly affordable for middle and working-class families. </p>
+    </section>
+    
+    <section id="store3">
+        <h3>3. Superior Grocer — Cudahy (Gateway Cities)</h3>
+        <p><strong>Median Household Income:</strong> $56,615 | <strong>AMI Tier:</strong> Extremely Low / Very Low Income | <strong>Population:</strong> 22,722</p>
+        <p>The collapse of manufacturing in the late 20th century triggered white flight and left Cudahy with an economically vulnerable, working-class Latino population lacking generational wealth. 
+            Because its tiny 1-square-mile footprint lacks a lucrative commercial tax base, the city suffers from institutional underfunding that leaves residents reliant on high-volume discount grocers.</p>
+        <div class="store-photo-container">
+            <img src="photos/sup.jpg" alt="A view of the original retro mid-century modern facade of Superior Grocer in Northeast Los Angeles, featuring bold geometric structural architecture." class="store-photo">
+            <p class="photo-credit">Photo: Los Angeles Conservancy</p>
+        </div>
+        <p> Superior Grocer targets low-income neighborhoods by operating a high-volume, low-margin budget format that prioritizes deeply discounted bulk goods and low-cost staples. 
+            While this pricing provides an essential economic safety net for underserved areas, the lack of premium or organic selections highlights a stark gap in health-focused food equity.</p>
+    </section>
+    
+    <section id="store4">
+        <h3>4. Ralphs — South Los Angeles</h3>
+        <p><strong>Median Household Income:</strong> $57,622 | <strong>AMI Tier:</strong> Low / Very Low Income | <strong>Population:</strong> 279,729</p>
+        <p>Decades of institutional discrimination and corporate flight culminated in systemic food apartheid, which worsened drastically after major supermarkets abandoned the region following the 1992 civil unrest. 
+            While city rebranding initiatives sought to attract new capital, residents continue to face an ongoing racial wealth gap and disproportionately high housing cost burdens.</p>
+        <div class="store-photo-container">
+            <img src="photos/ralphs.jpg" alt="Exterior facade of a modern Ralphs supermarket branch in South Los Angeles, showing the round Ralph's logo and mutliple glass windows below the sign" class="store-photo">
+            <p class="photo-credit">Photo: Yelp</p>
+        </div>
+        <p> Founded in 1873 by George A. Ralphs, Ralphs is Southern California’s oldest operating grocery chain. Originally established in downtown Los Angeles, the brand brought innovation to the grocery store like self-service shopping, in-house bakeries, and laser scanning.
+            As a conventional unionized supermarket, Ralphs utilizes standard corporate pricing paired with a "rewards card" system, serving as a baseline for standard regional living costs. In lower-income areas, however, the lack of localized competition often creates higher average grocery bills for residents compared to suburban locations with more store options.</p>
+    </section>
+    
+    <section id="store5">
+        <h3>5. Erewhon — West Hollywood / Beverly Hills (Westside Cities)</h3>
+        <p><strong>Median Household Income:</strong> $132,977 | <strong>AMI Tier:</strong> Above Moderate Income | <strong>Population:</strong> 68,319 (Combined)</p>
+        <p>Historically protected by exclusionary zoning and predatory lending that barred lower-income families, these Westside cities represent an extreme hyper-concentration of capital. 
+            The presence of ultra-luxury retail ecosystems like Erewhon serves as a highly visible monument to the massive economic chasm separating these hillside communities from working-class neighborhoods nearby.</p>
+        <div class="store-photo-container">
+            <img src="photos/erewhon.jpeg" alt="The hyper-modern, upscale storefront of the Erewhon market location in Beverly Hills, showing rooftop balcony, trees infront of glass windows, and sign is backlight with orange lighting" class="store-photo">
+            <p class="photo-credit">Photo: Erewhon</p>
+        </div>
+        <p> Erewhon utilizes an aggressive, hyper-luxury pricing strategy driven by ultra-exclusive organic sourcing, specialized wellness items, and highly sought out branded products and foods. 
+            By intentionally scaling its pricing out of reach for average consumers, the store functions as a form of elite economic curation designed strictly for the ultra-wealthy.</p>
+    </section>
+
+    <section id="sources">
+        <h3>Citations and Sources</h3>
+        <ul>
+            <li>U.S. Census Bureau (2020). <i>Population.</i></li>
+            <li>LA GeoHub. <i>Area Median Income (AMI) Threshold Guidelines, Median Household Income.</i></li>
+            <li>Wikipedia contributors. Local Municipal Profiles (Pasadena, Monterey Park, Cudahy, South Los Angeles, Beverly Hills, California).</li>
+        </ul>
+        <h4>Wikipedia Municipal Profiles:</h4>
+        <ul>
+            <li>Store 1: <a href="https://en.wikipedia.org/wiki/Pasadena,_California" target="_blank">Pasadena, California Profile</a></li>
+            <li>Store 2: <a href="https://en.wikipedia.org/wiki/Monterey_Park,_California" target="_blank">Monterey Park, California Profile</a></li>
+            <li>Store 3: <a href="https://en.wikipedia.org/wiki/Cudahy,_California" target="_blank">Cudahy, California Profile</a></li>
+            <li>Store 4: <a href="https://en.wikipedia.org/wiki/South_Los_Angeles" target="_blank">South Los Angeles Regional Profile</a></li>
+            <li>Store 5: <a href="https://en.wikipedia.org/wiki/Beverly_Hills,_California" target="_blank">Beverly Hills, California Profile</a></li>
+        </ul>
+    </section>
+</div>
+
+<script src="assets/routes.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaXNhZGFsaSIsImEiOiJjbXRrbXNmczUwamxvMzFwbnFmNGM4eDJuIn0.OHBV6FnX4-VEFQgueaW9YA';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        zoom: 10.5,
+        center: [-118.25133186154424, 34.05718994885887],
+        pitch: 65,
+        bearing: -180,
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/standard', // style URL
+        interactive: true
+    });
+
+    
+
+    let animationFrameId = null; // Keeps track of the animation loop globally
+    let activeChapterName = 'Introduction'
+    // Select any path dynamically
+    const chapters = {
+        'Introduction': {
+            center: null,
+            routeData: null, 
+            zoom: 7,
+            pitch: 65
+        },
+        'store1': {
+            center: [-118.14699177721579, 34.135089904093014],
+            routeData: null, // Points to const route1 from routes.js
+            zoom: 18,
+            pitch: 65,
+            bearing: -65
+        },
+        'store2': {
+            center: [-118.13358494804402, 34.06370748471705],
+            routeData: routeConfig.route1, // Points to const route2 from routes.js
+            zoom: 18,
+            pitch: 65,
+            bearing: -65
+        },
+        'store3': {
+            center: [-118.18655572557205, 33.968507119453626],
+            routeData: routeConfig.route2, // Points to const route3 from routes.js
+            zoom: 18,
+            pitch: 65
+        },
+        'store4': {
+            center: [-118.3076926087106, 33.95949743947618],
+            routeData: routeConfig.route3, // Points to const route4 from routes.js
+            zoom: 18,
+            pitch: 65
+        },
+        'store5': {
+            center: [-118.40140403697337, 34.06952233332665], 
+            routeData: routeConfig.route4,
+            zoom: 18,
+            pitch: 65
+        }
+    };
+
+    // add terrain, sky, and line layers once the style has loaded
+    map.on('style.load', () => {
+        map.setConfigProperty('basemap', 'show3dObjects', true);
+
+        map.addSource('mapbox-dem', {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 520,
+            'maxzoom': 16,
+            lightPreset: "dawn"
+        });
+        map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+        
+        map.addSource('trace', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': []
+                }
+            }
+        });
+        map.addLayer({
+            type: 'line',
+            source: 'trace',
+            id: 'trace',
+            paint: {
+                'line-color': 'red',
+                'line-width': 5
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round'
+            }
+        });
+        map.addSource('source1', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': routeConfig.route1.target
+                }
+            }
+        });
+        map.addLayer({
+            type: 'line',
+            source: 'source1',
+            id: 'line1',
+            paint: {
+                'line-color': 'red',
+                'line-width': 5
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round'
+            }
+        });
+        map.addSource('source2', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': routeConfig.route2.target
+                }
+            }
+        });
+        map.addLayer({
+            type: 'line',
+            source: 'source2',
+            id: 'line2',
+            paint: {
+                'line-color': 'red',
+                'line-width': 5
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round'
+            }
+        });
+        map.addSource('source3', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': routeConfig.route3.target
+                }
+            }
+        });
+        map.addLayer({
+            type: 'line',
+            source: 'source3',
+            id: 'line3',
+            paint: {
+                'line-color': 'red',
+                'line-width': 5
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round'
+            }
+        });
+        map.addSource('source4', {
+            type: 'geojson',
+            data: {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': routeConfig.route4.target
+                }
+            }
+        });
+        map.addLayer({
+            type: 'line',
+            source: 'source4',
+            id: 'line4',
+            paint: {
+                'line-color': 'red',
+                'line-width': 5
+            },
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round'
+            }
+        });
+        // Loop through your existing chapters object to build the markers dynamically
+    for (const key in chapters) {
+        const chapter = chapters[key];
+    
+        // Skip the introduction slide since it doesn't represent a physical store location
+        if (key === 'Introduction' || !chapter.center) continue;
+
+        // 1. Create a custom HTML element for the marker pin
+        const el = document.createElement('div');
+        el.className = 'store-marker';
+    
+        // Match emojis dynamically to your specific store names!
+        if (key === 'store1') el.innerHTML = '$$$';      // Trader Joe's
+        else if (key === 'store2') el.innerHTML = '$$'; // 99 Ranch
+        else if (key === 'store3') el.innerHTML = '$'; // Superior Grocer
+        else if (key === 'store4') el.innerHTML = '$$'; // Ralph's
+        else if (key === 'store5') el.innerHTML = '$$$$'; // Erewhon
+        else el.innerHTML = '📍';
+
+        // 2. Attach an optional popup window that appears when clicking the symbol
+        const popup = new mapboxgl.Popup({ offset: 10 })
+            .setHTML(`<strong>${document.querySelector(`#${key} h3`).innerText}</strong>`);
+
+        // 3. Instantiate the marker and place it permanently on your LA County grid
+        new mapboxgl.Marker(el)
+            .setLngLat(chapter.center)
+            .setPopup(popup) // Binds the popup window to click events
+            .addTo(map);
+    }
+    });
+
+// Global tracking variable for smooth rendering
+let currentActiveChapter = 'Introduction';
+
+function updateCameraOnScroll() {
+    const featuresElement = document.getElementById('features');
+    const sections = featuresElement.getElementsByTagName('section');
+    const cameraAltitude = 2000;
+    let activeSectionId = currentActiveChapter;
+    let progress = 0;
+
+    for (let i = 0; i < sections.length; i++) {
+    const rect = sections[i].getBoundingClientRect();
+    
+    // Check if the section is occupying the middle of the screen
+    if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+        activeSectionId = sections[i].id;
+        
+        const totalHeight = rect.height;
+        const scrolledPast = (window.innerHeight / 2) - rect.top;
+        
+        // Raw progress from 0 to 1
+        let rawProgress = scrolledPast / totalHeight;
+
+        // CREATE A FOCUS BUFFER:
+        // By multiplying the progress by 1.3, the animation will hit 100% (1.0) 
+        // when the user is only about 75% of the way down the text block.
+        // The remaining 25% of the scroll keeps the camera completely frozen on the store.
+        progress = Math.max(0, Math.min(1, rawProgress * 1.3));
+        break;
+        }
+    }
+    // Update active visual states in the sidebar
+    if (activeSectionId !== currentActiveChapter) {
+        document.getElementById(currentActiveChapter)?.classList.remove('active');
+        document.getElementById(activeSectionId)?.classList.add('active');
+        currentActiveChapter = activeSectionId;
+    }
+
+    const chapter = chapters[activeSectionId];
+    if (!chapter) return;
+
+    // 2. If the chapter has route data, tie the camera position directly to the scroll progress
+if (chapter.routeData) {
+    const targetRoute = chapter.routeData.target;
+
+    if (targetRoute && targetRoute.length >= 2) {
+        const targetLine = turf.lineString(targetRoute);
+        const targetDistance = turf.lineDistance(targetLine);
+
+        // Find the exact coordinates along the street path matching scroll percentage
+        const targetPoint = turf.along(targetLine, targetDistance * progress).geometry.coordinates;
+
+        // Generate the line sequence up to the current scroll point
+        try {
+            const segment = turf.lineSlice(
+                turf.point(targetRoute[0]), 
+                turf.point(targetPoint), 
+                targetLine
+            );
+            if (map.getSource('trace')) {
+                map.getSource('trace').setData(segment);
+            }
+        } catch (e) {
+            console.error("Turf slicing line match bypass:", e);
+        }
+
+        // --- DYNAMIC ZOOM CAMERA LOGIC ---
+        const camera = map.getFreeCameraOptions();
+
+        // 1. Define your starting (zoomed out) and ending (zoomed in) altitudes
+        const startAltitude = 1800; // Height while traveling along the route
+        const endAltitude = 450;    // Height when arriving right at the store destination
+
+        // 2. Linearly interpolate the altitude based on scroll progress
+        // As progress goes from 0 to 1, the camera lowers into the neighborhood
+        const cameraAltitude = startAltitude - (progress * (startAltitude - endAltitude));
+
+        // 3. Maintain the physical offset so the 3D perspective stays perfectly locked
+        const staticCameraLng = targetPoint[0] - 0.003; 
+        const staticCameraLat = targetPoint[1] - 0.004; 
+
+        // NOTE: We shrunk the coordinate offsets slightly (-0.003 instead of -0.01).
+        // Since the camera is getting much closer to the ground, a smaller offset 
+        // keeps the store perfectly framed without the camera clipping into hillsides.
+
+        camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
+            { lng: staticCameraLng, lat: staticCameraLat },
+            cameraAltitude
+        );
+
+        // 4. Keep the camera tracking the front tip of the drawing line
+        camera.lookAtPoint({
+            lng: targetPoint[0],
+            lat: targetPoint[1]
+        });
+
+        map.setFreeCameraOptions(camera);
+    }
+} else {
+        // 3. Static chapters (Introduction / Store 1) use smooth flyTo transition
+        // We only trigger this if we aren't mid-scroll on an animated path
+        if (chapter.center && !map.isMoving()) {
+            map.flyTo({
+                center: chapter.center,
+                zoom: chapter.zoom,
+                pitch: chapter.pitch,
+                essential: true
+            });
+            
+            // Clear the drawn line if we scroll back to static views
+            if (map.getSource('trace')) {
+                map.getSource('trace').setData({
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: [] }
+                });
+            }
+        }
+    }
+}
+
+// 4. Bind the scroll listener to your sidebar container
+document.getElementById('features').addEventListener('scroll', updateCameraOnScroll);
+</script>
+
+</body>
+</html>
