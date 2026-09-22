@@ -1,2 +1,2 @@
 # grocery_scrollytelling
-Originally from GEOG 493 final project
+Originally from GEOG 492 final project
